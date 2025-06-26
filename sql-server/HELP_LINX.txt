@@ -1,0 +1,401 @@
+--BD
+SELECT
+	T.name AS Tabela
+	, C.name AS Coluna
+FROM sys.sysobjects AS T(NOLOCK)
+INNER JOIN sys.all_columns AS C(NOLOCK) ON T.id = C.object_id
+WHERE T.name LIKE '%cedente%'
+	AND C.name LIKE '%st%' 
+	AND T.XTYPE = 'U'
+ORDER BY T.name ASC;
+
+SELECT
+    S.name AS Esquema,
+    T.name AS Tabela,
+    C.name AS Coluna
+FROM sys.objects AS T WITH (NOLOCK)
+INNER JOIN sys.all_columns AS C WITH (NOLOCK) ON T.object_id = C.object_id
+INNER JOIN sys.schemas AS S WITH (NOLOCK) ON T.schema_id = S.schema_id
+WHERE T.name LIKE '%protest%'
+    --AND C.name LIKE '%st%' 
+    AND T.type = 'U' -- Tabelas do usuário
+ORDER BY S.name, T.name, C.name;
+
+
+
+begin transaction
+rollback transaction
+
+
+AUTORIZAR AUTOMATICAMENTE
+UPDATE nfe_parametros SET autorizar_automaticamente = 0 WHERE empresa = 1
+
+
+/*---------------------------------------------------*/
+--BD Config Tributária
+
+SELECT 
+m.documento, 
+m.serie, 
+m.identificador, 
+'-' AS '-',
+pd.id_config_tributaria,
+ctd.id_config_tributaria_detalhe,
+m.cfop AS 'Natureza',
+cf.id_clientes_fornec_classe_fiscal AS 'ID CF',
+cfcf.descricao AS 'CF',
+'-' AS '-',
+ m.id_cst_icms_fiscal
+,* FROM movimento m
+INNER JOIN clientes_fornec cf ON cf.cod_cliente = m.codigo_cliente
+INNER JOIN clientes_fornec_classe_fiscal cfcf ON cfcf.id_clientes_fornec_classe_fiscal = cf.id_clientes_fornec_classe_fiscal
+INNER JOIN produtos_detalhes pd ON pd.codigoproduto = m.codigoproduto AND pd.empresa = m.empresa
+INNER JOIN config_tributaria_detalhes ctd ON ctd.cfop = m.cfop 
+	AND ctd.id_config_tributaria = pd.id_config_tributaria 
+	AND ctd.id_clientes_fornec_classe_fiscal = cf.id_clientes_fornec_classe_fiscal
+WHERE m.identificador = 'C4666745-FF58-48CB-8E10-5A54CA21EDF4'
+
+/*---------------------------------------------------*/
+--Senha usuario
+
+USE portal
+
+DECLARE @portal_login TABLE (id VARCHAR(50) COLLATE SQL_Latin1_General_CP1_CI_AS)
+INSERT INTO @portal_login VALUES ('microvix.dev9016'),('microvix.teste9017')
+
+SELECT * FROM @portal_login pl
+OUTER APPLY (
+	SELECT TOP 1 
+		l.log_senha
+	FROM log l
+	WHERE l.log_login = pl.id
+		AND l.log_senha <> ''
+	ORDER BY l.log_id DESC
+) AS l1(log_senha)
+
+/*---------------------------------------------------*/
+--Mensagens de erro nfe nf-e rejeição sefaz
+select * from nfe_comportamento
+
+select REPLACE(codigo, 'M', '10'), * from nfe_comportamento order by CAST(REPLACE(codigo, 'M', '10') AS INT)
+
+/*---------------------------------------------------*/
+
+
+--VER SP NO BD
+sp_helptext spValoresFiscaisV2
+
+/*---------------------------------------------------*/
+
+
+--Descobrir o endereço de ambiente das rotinas
+--  micportal
+--  config_ambiente_acesso
+--  empresas
+--  config_rotina
+--  SE NÃO
+--    MV
+	
+	
+--{ Ambientes
+use portal
+
+DECLARE @portal TABLE (id INT)
+INSERT INTO @portal VALUES (9016) -- config_ambiente = 33
+INSERT INTO @portal VALUES (9017) -- config_ambiente = 34
+INSERT INTO @portal VALUES (950)  -- config_ambiente = 34
+
+SELECT 
+e.emp_codigo AS Portal
+, e.id_config_ambiente
+, cf.descricao
+, cr.descricao
+, cr.id_config_rotina
+, car.id_config_ambiente_rotina
+, car.endereco
+FROM empresas e
+INNER JOIN config_ambiente cf ON cf.id_config_ambiente = e.id_config_ambiente
+INNER JOIN config_ambiente_rotina car ON car.id_config_ambiente = e.id_config_ambiente
+INNER JOIN config_rotina cr ON cr.id_config_rotina = car.id_config_rotina
+WHERE e.emp_codigo IN (SELECT p.id FROM @portal p)
+AND cr.descricao like '%fiscal%'
+ORDER BY e.emp_codigo
+
+select id_config_ambiente, * from empresas where emp_codigo = 9016
+select id_config_ambiente, * from config_ambiente where id_config_ambiente = 15
+select * from config_rotina where descricao Like '%ES.%'
+
+
+update config_ambiente_rotina
+set endereco = 'http://192.168.18.94:9989'
+where id_config_ambiente =  15
+and id_config_rotina = 61
+
+
+
+--}
+
+
+
+POS ERP URL ->
+tabela servidor
+select  * from servidor where servidor = 215 order by servidor desc -- 215 fui eu que criei
+select servidor, * from empresas
+
+LISTA DE SERVIDORES QUE CRIEI:
+215
+122
+
+
+/*---------------------------------------------------*/
+DEBUG API
+  Não parar a build quando fecha o swagger:
+    WebApi -> propriedades
+    Web
+    Habilitar e continuar...
+
+/*---------------------------------------------------*/
+DEBUG SPED
+  WebConfig -> dataAccessConfiguration = true
+  Views->Login -> Colocar o portal
+
+
+
+/*---------------------------------------------------*/
+
+
+Problemas ao criar Controller
+  DEBUGANDO
+    LFA -> Ctrl+vírgula (Bootstraper)
+      Averiguar se uma nova classe foi instanciada no arquivo Ex: Nova service
+
+  ERP
+    Averiguar se está como homologação
+
+/*---------------------------------------------------*/
+
+
+MODELO 55
+tabela nfe->series->modelo_nf
+
+
+/*---------------------------------------------------*/
+
+? -> ternario
+
+
+/*---------------------------------------------------*/
+
+
+
+Desfazer Branch
+Mapear pasta raiz (MJxxx)
+excluir pasta raiz e dar checkin
+
+
+/*---------------------------------------------------*/
+
+Branchs ->
+
+TFS
+
+Corretiva = SUST
+Homolog = Trunk
+Demandas = Branch a partir do Releases
+
+
+GIT
+
+Corretiva = -
+Homolog = Develop
+Demandas = Branch a partir do Releases
+
+
+/*---------------------------------------------------*/
+
+
+Problemas de Porta
+Procurar por e-mail do Gerson categorizado como amarelo
+Título email:
+Utilização da VM
+
+
+/*---------------------------------------------------*/
+C#
+
+Dictionary
+Lista tupla
+
+.Select(t => t.x);
+
+.Where
+
+.
+.
+
+Foreach(var item in itens){}
+request.Remessas.Select(r => r.Id).ToList()
+
+
+/*---------------------------------------------------*/
+
+
+POS
+  SQL Express 2014 -> (https://share.linx.com.br/pages/viewpage.action?pageId=50792855)
+
+  VS -> necessário a config do Blend ao instalar
+  Branch -> POS Trunk
+  Map -> C:\
+  Abrir a solution Microvix.POS
+  App.Config
+  configs ->
+    Ver se alguém tem as pastas de config
+    Alterar o endereço de acesso a WebServicePOS
+      acessar a VM (mst) \\joisrvtaxdev
+        server Manager
+        tools
+        IIS
+        JOISRVTAXDEV
+        WebServicePOS -> bindings (PORTA)
+	Logar utilizando login e senha do portal de dev
+	
+
+
+
+
+
+PROBLEMA NA VPN E ACESSO AO JOISRVTAXDEV
+
+
+
+
+
+
+/*---------------------------------------------------*/
+
+tipo_transacao
+J - Ajuste
+A
+C
+D
+E
+I - Complemento ou transferencia de icms
+M
+O
+P
+R - Reserva
+S
+T
+V
+
+/*---------------------------------------------------*/
+
+
+REMESSA DE PARA
+
+
+
+/*---------------------------------------------------*/
+
+
+
+TFS
+linxsaas\00.bryan.konowalow
+Linx@Linx@_YhC92$dd&F1
+)*FnB>(RA3
+00.bryan.konowalow
+
+
+
+
+/*-----------------------------------------------------*/
+
+para gerar o vale
+	Painel
+	Vale Compras e trocas
+	
+	
+	tabela trocas
+	
+	
+	
+Venda contigencia
+
+	Nova venda
+	valor random (prosseguir)
+	Gera a venda
+	vai em listar vendas
+	
+	segue a vida
+	
+	livro razão
+	
+	
+	
+/*-----------------------------------------------------*/
+
+FTP - Filezilla
+
+VS Code
+"C:\Users\bryan.konowalow\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+
+NP++
+"C:\Program Files\Notepad++\notepad++.exe"
+
+
+/*-----------------------------------------------------*/
+
+Fazer funcionar 
+
+Estoque
+Interno {
+	npm install
+	npm run serve -- --mode 'development' (VERIFICAR)
+	acessar a devolucao pelo ERP e pegar o link /Autenticar no devtools
+}
+Externo {
+	npm install
+	pegar o ERPADMIN que ta no devtools acessando o portal externo e utilizar no env.
+	npm run serve -- --mode '--' (VERIFICAR)
+	acessar a devolucao pelo ERP e pegar o link /Autenticar no devtools
+}
+Obs (Atencao, para conseguir finalizar uma devolução ext local, precisei de permissão no bd do fiscal)
+
+
+VendaFacil
+Interno{
+	npm install
+	npm run serve -- --mode 'devtax xxx'
+	pegar a senha atualizada no grupo dos DEV's do 9016
+}
+Externo{
+	
+}
+
+
+/--------------------------------------------------------/
+
+Vue
+
+commit -> mutation
+dispatch -> action
+
+
+
+/--------------------------------------------------------/
+DICAS GIT
+
+Conflito merge / Pull request
+
+VSCode vai para a branch target, escreve no terminal git merge nome_branch_origem_merge 
+dale e resolve os conflitos!
+
+depois é só fazer PR de novo =D
+
+----
+Remover Branchs
+
+(Bash)
+git branch -D `git branch | grep -E 'MODAJOI'`
+
+git branch -D `git branch | grep -E 'bugfix'`

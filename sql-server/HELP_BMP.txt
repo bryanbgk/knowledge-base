@@ -1,0 +1,166 @@
+PADRONIZAÇÃO DE CÓDIGO
+https://dev.azure.com/moneyp/OpenBank/_wiki/wikis/OpenBank.wiki/531/Padroniza%C3%A7%C3%A3o-C%C3%B3digo-DBS
+
+
+Cadastro de acesso:
+Operador no back
+
+
+13263530
+
+
+Dúvidas:
+
+como resolveram timezone?
+
+cálculo / arredondamento?
+
+
+
+stepfunction
+lambdas
+
+
+=============================================== DATABASE ===============================================
+SELECT
+    S.name AS Esquema
+	, T.name AS Tabela
+	, S.name + '.' + T.name AS EsquemaTabela
+	--, C.name AS Coluna
+FROM sys.objects AS T WITH (NOLOCK)
+INNER JOIN sys.schemas AS S WITH (NOLOCK) ON T.schema_id = S.schema_id
+--INNER JOIN sys.all_columns AS C WITH (NOLOCK) ON T.object_id = C.object_id
+WHERE T.name LIKE '%outbox%'
+    --AND C.name LIKE '%st%' 
+    AND T.type = 'U' -- Tabelas do usuário
+ORDER BY S.name, T.name;
+
+begin transaction
+rollback transaction
+
+
+-- Pegar conta por codigo
+SELECT
+Numero + Digito AS NumeroDigito
+, *
+FROM cad.Conta WITH(NOLOCK)
+WHERE Codigo = '9730F3E2-7FEC-4A5C-72C5-08DAB2A86A91'
+
+
+
+-- Conta nova:
+UPDATE ofec
+SET ofec.CodigoPerfilFrontEnd = '5C4433D7-4F6C-4252-CDE9-08D9204BB04F'
+FROM cad.OperadorFrontEndConta ofec WITH(NOLOCK)
+INNER JOIN cad.OperadorFrontEnd ofe WITH(NOLOCK) 
+    ON ofec.CodigoOperadorFrontEnd = ofe.Codigo
+WHERE ofe.Email = 'bryan.konowalow@moneyp.com.br';
+
+
+=============================================== DATABASE ===============================================
+
+
+================================================= AWS =================================================
+
+CloudWatch - Verificar Logs
+Lambda
+Simple Queue Service
+
+================================================= AWS =================================================
+
+================================================= GIT =================================================
+
+
+#XXXX feat: Adicionado cobranca compartilhada no registroBoleto
+
+
+bugfix/#{numero-task}-{titulo}
+
+(não considerar parênteses)
+#(n° do workitem) (tipo do commit*): (título compreendendo breve descrição da alteração) em (principal arquivo alterado)
+
+(Descrição dinâmica opcional)
+(Descrição dinâmica opcional)
+(Descrição dinâmica opcional)
+
+Exemplo:
+#9416 build: Alteração de TargetFramework em Bureaus.Core.csproj
+
+Migração da versão do framework de 5.0 para 6.0
+
+
+Os tipos de commits que usamos são:
+fix: Resolução de Bug;
+feat: Inicio da implementação de uma funcionalidade;
+chore: Trabalho em progresso de uma funcionalidade;
+refactor: ajuste sem mudar lógica - refatoração;
+test: Implementação de testes automatizados;
+style: Mudanças de formatação de código para melhorar legibilidade - LINT;
+perf: Ajuste de performance;
+docs: Inserir ou alterar documentação;
+ci: Ajuste nas configurações do CI;
+build: Ajuste nas configurações de build;
+#65464 fix: (título compreendendo breve descrição da alteração) em (principal arquivo alterado)
+
+
+
+Conflito de Merge para QA ->
+	VS
+		entrar na branch de QA
+		atualizar
+		criar uma branch a partir de QA como: #77741-OnQA
+		fazer cherry pick de cada commit EM SEQUENCIA DE MANDADOS
+		resolver conflitos e dar push
+		criar PR dessa nova branch para QA
+		
+git branch -D `git branch | grep -E 'bugfix'`
+git branch -D `git branch | grep -v 'DEVELOP'`
+git branch | grep -v 'DEVELOP' | xargs git branch -D
+
+git branch --list 'bugfix*' | xargs git branch -d
+
+
+================================================= GIT =================================================
+
+
+=============================================== ACESSOS  ===============================================
+App ->
+Login + senha
+Verificar no retaguarda se os perfis estão ok
+
+
+=============================================== ACESSOS  ===============================================
+
+
+================================================= DIRETRIZES  =================================================
+
+Missão BMP 
+
+Fomentar o acesso às melhores soluções financeiras, bancárias e tecnológicas para todos aqueles  que queiram estar à frente em seus negócios.
+
+
+
+Visão 
+
+Sermos a empresa referência em banking as a service e crédito, reconhecida como a opção mais  inteligente, ágil, inovadora e confiável tanto pelo mercado quanto pelos nossos clientes e  colaboradores. 
+
+
+
+Valores  
+
+• Criamos o futuro. 
+
+• Somos pensadores e ambiciosos. 
+
+• Temos ideias ousadas. 
+
+• O impossível não existe, pois adoramos desafios. 
+
+• Nosso foco é o resultado 
+
+• Aqui crescimento só faz sentido se for junto com o cliente. 
+
+• Respeito e integridade acima de tudo.
+
+
+================================================= DIRETRIZES  =================================================
